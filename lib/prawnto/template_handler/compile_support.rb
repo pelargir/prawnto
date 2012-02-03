@@ -30,7 +30,9 @@ module Prawnto
       # added to make ie happy with ssl pdf's (per naisayer)
       def ssl_request?
         protocol = @controller.request.env['SERVER_PROTOCOL']
-        protocol && protocol.downcase == "https"
+        forwarded_protocol = @controller.request.env['HTTP_X_FORWARDED_PROTO']
+        https = @controller.request.env['HTTPS']
+        (protocol =~ /https/i) || (forwarded_protocol =~ /https/i) || (https =~ /on/i)
       end
 
       # TODO: kept around from railspdf-- maybe not needed anymore? should check.
