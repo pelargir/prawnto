@@ -2,7 +2,6 @@ $:.unshift(File.dirname(__FILE__)) unless
 $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 module Prawnto
-  VERSION='0.0.4'
   autoload :ActionControllerMixin, 'prawnto/action_controller_mixin'
   autoload :ActionViewMixin, 'prawnto/action_view_mixin'
   module TemplateHandlers
@@ -19,7 +18,7 @@ module Prawnto
     def enable
       ActionController::Base.send :include, Prawnto::ActionControllerMixin
       ActionView::Base.send :include, Prawnto::ActionViewMixin
-      Mime::Type.register("application/pdf", :pdf) unless Mime::Type.lookup_by_extension(:pdf)
+      Mime::Type.register "application/pdf", :pdf unless Mime::Type.lookup_by_extension(:pdf)
       ActionView::Template.register_template_handler 'prawn', Prawnto::TemplateHandlers::Base
       ActionView::Template.register_template_handler 'prawn_dsl', Prawnto::TemplateHandlers::Dsl
       ActionView::Template.register_template_handler 'prawn_xxx', Prawnto::TemplateHandlers::Raw  

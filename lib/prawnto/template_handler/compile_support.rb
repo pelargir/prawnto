@@ -1,8 +1,6 @@
 module Prawnto
   module TemplateHandler
-
     class CompileSupport
-
       attr_reader :options
 
       def initialize(controller)
@@ -24,15 +22,17 @@ module Prawnto
 
       # TODO: kept around from railspdf-- maybe not needed anymore? should check.
       def ie_request?
-        @controller.request.env['HTTP_USER_AGENT'] =~ /msie/i
+        return @ie_request if instance_variable_defined?(:@ie_request)
+        @ie_request = @controller.request.env['HTTP_USER_AGENT'] =~ /msie/i
       end
 
       # added to make ie happy with ssl pdf's (per naisayer)
       def ssl_request?
+        return @ssl_request if instance_variable_defined?(:@ssl_request)
         protocol = @controller.request.env['SERVER_PROTOCOL']
         forwarded_protocol = @controller.request.env['HTTP_X_FORWARDED_PROTO']
         https = @controller.request.env['HTTPS']
-        (protocol =~ /https/i) || (forwarded_protocol =~ /https/i) || (https =~ /on/i)
+        @ssl_request = (protocol =~ /https/i) || (forwarded_protocol =~ /https/i) || (https =~ /on/i)
       end
 
       # TODO: kept around from railspdf-- maybe not needed anymore? should check.

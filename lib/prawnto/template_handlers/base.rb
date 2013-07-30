@@ -1,23 +1,20 @@
+require "prawnto/available_features"
+
 module Prawnto
   module TemplateHandlers
-    if ::Rails::VERSION::MAJOR < 3
-      class Base < ::ActionView::TemplateHandler
-        include ::ActionView::TemplateHandlers::Compilable
+    class Base < (base_class_for_template_handler_required? ? ::ActionView::TemplateHandler : ::Object)
+      include ::ActionView::TemplateHandlers::Compilable if template_should_include_compilable?
 
-        def compile(template)
-          "_prawnto_compile_setup;" +
-          "pdf = Prawn::Document.new(@prawnto_options[:prawn]);" + 
-          "#{template.source}\n" +
-          "pdf.render;"
-        end
+      def self.call(template)
+        "_prawnto_compile_setup;" +
+        "pdf = Prawn::Document.new(@prawnto_options[:prawn]);" +
+        "#{template.source}\n" +
+        "pdf.render;"
       end
-    else
-      class Base
-        def self.call(template)
-          "_prawnto_compile_setup;" +
-          "pdf = Prawn::Document.new(@prawnto_options[:prawn]);" + 
-          "#{template.source}\n" +
-          "pdf.render;"
+
+      unless template_has_class_level_call_method?
+        def compile(template)
+          self.class.call(template)
         end
       end
     end
